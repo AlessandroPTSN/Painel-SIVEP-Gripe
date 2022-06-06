@@ -350,7 +350,7 @@ ui = navbarPage("SIVEP-Gripe",theme = shinytheme("flatly"), #shinytheme("cerulea
 
 
                       h2("Painel SIVEP-Gripe"),
-                      h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe 2021-2022", style = "color:gray")),
+                      h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe - incluindo dados da COVID-19 2021-2022", style = "color:gray")),
 
                       selectInput("totais", h3("Unidade Federativa"),
                                   choices = list("TODOS" = 'Todas', "Acre" = 'AC',"ALAGOAS" ="AL",
@@ -467,7 +467,7 @@ ui = navbarPage("SIVEP-Gripe",theme = shinytheme("flatly"), #shinytheme("cerulea
 tabPanel("Experimentos",
          fluidRow(
            h2("Painel SIVEP-Gripe"),
-           h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe 2021-2022", style = "color:gray")),
+           h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe - incluindo dados da COVID-19 2021-2022", style = "color:gray")),
            
            
            
@@ -1353,7 +1353,7 @@ conditionalPanel(condition = "(input.tempo == 'ano' && input.doses == 'TRS' && i
 tabPanel("Correlação",
          fluidRow(
            h2("Painel SIVEP-Gripe"),
-           h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe 2021-2022", style = "color:gray")),
+           h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe - incluindo dados da COVID-19 2021-2022", style = "color:gray")),
            
            h3("Selecione a variavel desejada para calcular o índice de Moran"),
            
