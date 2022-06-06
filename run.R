@@ -11,6 +11,7 @@ library(lubridate)
 library(quantmod)
 library(xts)
 library(plyr)
+library(plotly)
 
 port <- Sys.getenv('PORT')
 
