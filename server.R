@@ -90,11 +90,267 @@ INT_OBT_ZR ,INT_OBT_UMA, INT_OBT_DAS, INT_OBT_TRS ,INT_ZR, INT_UMA, INT_DAS ,INT
 
 #unique(cruza_all$regiao)
 
+M=read.csv("/app/M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
+
+cor_doses = read_delim("/app/corr_h_o.csv", 
+                       delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
+
+###MORAN########
+cor_doses$MORTALIDADE_0 = (cor_doses$OBITO_0/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_1 = (cor_doses$OBITO_1/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_2 = (cor_doses$OBITO_2/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_3 = (cor_doses$OBITO_3/map_doses$POPULACAO)* 100000
+
+cor_doses$HOSPITALIZACAO_0 = (cor_doses$HOSP_0/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_1 = (cor_doses$HOSP_1/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_2 = (cor_doses$HOSP_2/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_3 = (cor_doses$HOSP_3/map_doses$POPULACAO)* 100000
+
+
+y=cor_doses%>%select(MORTALIDADE_0)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_0 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_0")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(MORTALIDADE_1 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_1 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_1")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(MORTALIDADE_2 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_2 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_2")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(MORTALIDADE_3 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_3")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_0 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_0 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_0")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_1 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_1 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_1")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_2 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_2 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_2")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_3 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_3")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+############
+
 
 shinyServer(function(input, output, session) {
-#Seletor de Local e tabelas####################################################################################################################################
 
   
+  output$img <- renderUI({
+    tags$img(src = "https://github.com/alessandroptsn.png", height = 208)
+  })
+  
+#Seletor de Local e tabelas####################################################################################################################################
+
+
   output$selected_var <- renderText({ 
     paste("Dados selecionados:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
@@ -133,17 +389,17 @@ shinyServer(function(input, output, session) {
   output$selected_var1 <- renderText({ 
     paste("Top 3 Primeira Dose:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
-  output$table1 <- renderTable(top_3_1 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",	"PRIMEIRA DOSE"))
+  output$table1 <- renderTable(top_3_1 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",  "PRIMEIRA DOSE"))
   
   output$selected_var2 <- renderText({ 
     paste("Top 3 Segunda Dose:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
-  output$table2 <- renderTable(top_3_2 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",	"SEGUNDA DOSE"))
+  output$table2 <- renderTable(top_3_2 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",  "SEGUNDA DOSE"))
   
   output$selected_varR <- renderText({ 
     paste("Top 3 Reforço Dose:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
-  output$tableR <- renderTable(top_3_R %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",	"REFORÇO DOSE"))
+  output$tableR <- renderTable(top_3_R %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",  "REFORÇO DOSE"))
   
 
   
@@ -2513,6 +2769,33 @@ shinyServer(function(input, output, session) {
   
   
 ##########  
+  
+  #MORAN#####
+  output$G_MORTALIDADE_0 <- renderPlotly({G_MORTALIDADE_0}) 
+  output$T_MORTALIDADE_0 <- renderTable(T_MORTALIDADE_0)
+  
+  output$G_MORTALIDADE_1 <- renderPlotly({G_MORTALIDADE_1}) 
+  output$T_MORTALIDADE_1 <- renderTable(T_MORTALIDADE_1)
+  
+  output$G_MORTALIDADE_2 <- renderPlotly({G_MORTALIDADE_2}) 
+  output$T_MORTALIDADE_2 <- renderTable(T_MORTALIDADE_2)
+  
+  output$G_MORTALIDADE_3 <- renderPlotly({G_MORTALIDADE_3}) 
+  output$T_MORTALIDADE_3 <- renderTable(T_MORTALIDADE_3)
+  
+  output$G_HOSPITALIZACAO_0 <- renderPlotly({G_HOSPITALIZACAO_0}) 
+  output$T_HOSPITALIZACAO_0 <- renderTable(T_HOSPITALIZACAO_0)
+  
+  output$G_HOSPITALIZACAO_1 <- renderPlotly({G_HOSPITALIZACAO_1}) 
+  output$T_HOSPITALIZACAO_1 <- renderTable(T_HOSPITALIZACAO_1)
+  
+  output$G_HOSPITALIZACAO_2 <- renderPlotly({G_HOSPITALIZACAO_2}) 
+  output$T_HOSPITALIZACAO_2 <- renderTable(T_HOSPITALIZACAO_2)
+  
+  output$G_HOSPITALIZACAO_3 <- renderPlotly({G_HOSPITALIZACAO_3}) 
+  output$T_HOSPITALIZACAO_3 <- renderTable(T_HOSPITALIZACAO_3)
+
+ 
 
 })
 
