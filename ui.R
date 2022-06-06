@@ -1426,7 +1426,6 @@ tabPanel("Correlação",
 tabPanel("Sobre",
 
          
-         h2("Criador"),
          fluidRow(
            tags$style(HTML("
                     img {
@@ -1444,7 +1443,7 @@ tabPanel("Sobre",
          mainPanel(
            br(),
            code("y = Mortalidade_X ou HOSPITALIZACAO_Y #Variavel"),br(),
-           code("wm = M #Matrix de distâncias das UF"),br(),
+           code("wm = M #Matrix binária de fronteiras (distâncias) das UF"),br(),
            code("n = length(y) #27 UF's"),br(),
            code("ybar = mean(y)"),br(),
            code("dy = y - ybar"),br(),
