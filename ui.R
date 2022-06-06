@@ -1424,6 +1424,9 @@ tabPanel("Correlação",
 
 
 tabPanel("Sobre",
+
+         
+         h2("Criador"),
          fluidRow(
            tags$style(HTML("
                     img {
@@ -1431,7 +1434,37 @@ tabPanel("Sobre",
                     }")),
            column(width = 12,uiOutput("img"),h2("Alessandro Pereira"),p("Graduado em Estatística da Universidade Federal do Rio Grande do Norte. Possui experiência em ciência de dados, principalmente na utilização da linguagem R. Usuário avançado do framework shiny, utilizado para a construção de dashboards.") ,p("GitHub:",a("https://github.com/AlessandroPTSN/Painel-SIVEP-Gripe",   href="https://github.com/AlessandroPTSN/Painel-SIVEP-Gripe"))),
            
+         ),
+         h2("Informações sobre os cálculos"),
+         fluidRow(column(width = 12,p("Cálculo da letalidade : (Óbitos/casos) * 100"))),
+         fluidRow(column(width = 12,p("Cálculo da incidência : (Casos/População) * 100.000"))),
+         fluidRow(column(width = 12,p("Cálculo da mortalidade : (Óbitos/População) * 100.000"))),
+         
+         h2("Indice de Moran"),
+         mainPanel(
+           br(),
+           code("y = Mortalidade_X ou HOSPITALIZACAO_Y #Variavel"),br(),
+           code("wm = M #Matrix de distâncias das UF"),br(),
+           code("n = length(y) #27 UF's"),br(),
+           code("ybar = mean(y)"),br(),
+           code("dy = y - ybar"),br(),
+           code("yi = rep(dy, each=n)"),br(),
+           code("yj = rep(dy)"),br(),
+           code("yiyj = yi * yj"),br(),
+           code("pm = matrix(yiyj, ncol=n)"),br(),
+           code("pmw = pm * wm"),br(),
+           code("spmw = sum(pmw)"),br(),
+           code("smw = sum(wm)"),br(),
+           code("sw  = spmw / smw"),br(),
+           code("vr = n / sum(dy^2)"),br(),
+           code("MI = vr * sw # INDICE DE MORAN"),br(),
+           code("ms = cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))"),br(),
+           code("ms = ms[ms[,3] > 0, ]"),br(),
+           code("ams = aggregate(ms[,2:3], list(ms[,1]), FUN=mean)"),br(),
+           code("ams = ams[,-1] #Variavel + Defasagem espacial"),br()
          )
+
+         
          
          
 )#Sobre
