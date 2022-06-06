@@ -90,10 +90,262 @@ INT_OBT_ZR ,INT_OBT_UMA, INT_OBT_DAS, INT_OBT_TRS ,INT_ZR, INT_UMA, INT_DAS ,INT
 
 #unique(cruza_all$regiao)
 
-navbarPage("SIVEP-Gripe",theme = shinytheme("cerulean"),#theme = shinytheme("slate"),
+M=read.csv("/app/M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
+
+cor_doses = read_delim("/app/corr_h_o.csv", 
+                       delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
+
+###MORAN########
+cor_doses$MORTALIDADE_0 = (cor_doses$OBITO_0/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_1 = (cor_doses$OBITO_1/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_2 = (cor_doses$OBITO_2/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_3 = (cor_doses$OBITO_3/map_doses$POPULACAO)* 100000
+
+cor_doses$HOSPITALIZACAO_0 = (cor_doses$HOSP_0/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_1 = (cor_doses$HOSP_1/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_2 = (cor_doses$HOSP_2/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_3 = (cor_doses$HOSP_3/map_doses$POPULACAO)* 100000
+
+
+y=cor_doses%>%select(MORTALIDADE_0)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_0 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_0")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(MORTALIDADE_1 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_1 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_1")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(MORTALIDADE_2 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_2 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_2")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(MORTALIDADE_3 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_MORTALIDADE_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("MORTALIDADE_3")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_MORTALIDADE_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_0 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_0 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_0")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_1 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_1 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_1")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_2 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_2 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_2")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSPITALIZACAO_3 )%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSPITALIZACAO_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSPITALIZACAO_3")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSPITALIZACAO_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+############
+
+
+
+ui = navbarPage("SIVEP-Gripe",theme = shinytheme("flatly"), #shinytheme("cerulean"),#theme = shinytheme("slate"),
 
 #PRIMEIRA ABA######################                          
-           tabPanel("Dashboard",
+           tabPanel("Painel Principal",
                     fluidRow(
 
 
@@ -101,32 +353,32 @@ navbarPage("SIVEP-Gripe",theme = shinytheme("cerulean"),#theme = shinytheme("sla
                       h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe 2021-2022", style = "color:gray")),
 
                       selectInput("totais", h3("Unidade Federativa"),
-                                  choices = list("TODOS" = 'Todas', "Acre" = 'AC',"ALAGOAS"	="AL",
-                                                 "AMAZONAS"=	"AM",
-                                                 "AMAPÁ"=	"AP",
-                                                 "BAHIA"	="BA",
-                                                 "CEARÁ"=	"CE",
-                                                 "DISTRITO FEDERAL"=	"DF",
-                                                 "ESPÍRITO SANTO"=	"ES",
-                                                 "GOIÁS"=	"GO",
-                                                 "MARANHÃO"	="MA",
-                                                 "MINAS GERAIS"=	"MG",
+                                  choices = list("TODOS" = 'Todas', "Acre" = 'AC',"ALAGOAS" ="AL",
+                                                 "AMAZONAS"=  "AM",
+                                                 "AMAPÁ"= "AP",
+                                                 "BAHIA"  ="BA",
+                                                 "CEARÁ"= "CE",
+                                                 "DISTRITO FEDERAL"=  "DF",
+                                                 "ESPÍRITO SANTO"=  "ES",
+                                                 "GOIÁS"= "GO",
+                                                 "MARANHÃO" ="MA",
+                                                 "MINAS GERAIS"=  "MG",
                                                  "MATO GROSSO DO SUL"="MS",
-                                                 "MATO GROSSO"=	"MT",
-                                                 "PARÁ"	="PA",
-                                                 "PARAÍBA"	="PB",
-                                                 "PERNANBUCO"	="PE",
-                                                 "PIAUÍ"=	"PI",
-                                                 "PARANÁ"	="PR",
-                                                 "RIO DE JANEIRO"=	"RJ",
-                                                 "RIO GRANDE DO NORTE"=	"RN",
-                                                 "RONDÔNIA"=	"RO",
-                                                 "RORAIMA"=	"RR",
-                                                 "RIO GRANDE DO SUL"=	"RS",
-                                                 "SANTA CATARINA"	="SC",
-                                                 "SERGIPE"=	"SE",
-                                                 "SÃO PAULO"=	"SP",
-                                                 "TOCANTINS"	="TO"), selected = 1),
+                                                 "MATO GROSSO"= "MT",
+                                                 "PARÁ" ="PA",
+                                                 "PARAÍBA"  ="PB",
+                                                 "PERNANBUCO" ="PE",
+                                                 "PIAUÍ"= "PI",
+                                                 "PARANÁ" ="PR",
+                                                 "RIO DE JANEIRO"=  "RJ",
+                                                 "RIO GRANDE DO NORTE"= "RN",
+                                                 "RONDÔNIA"=  "RO",
+                                                 "RORAIMA"= "RR",
+                                                 "RIO GRANDE DO SUL"= "RS",
+                                                 "SANTA CATARINA" ="SC",
+                                                 "SERGIPE"= "SE",
+                                                 "SÃO PAULO"= "SP",
+                                                 "TOCANTINS"  ="TO"), selected = 1),
 
                       
                       h3(textOutput("selected_var"), align = 'center'),
@@ -152,7 +404,7 @@ navbarPage("SIVEP-Gripe",theme = shinytheme("cerulean"),#theme = shinytheme("sla
                       ),
                       h6(div("Dados top doses de 2021", style = "color:gray")),
                       
-                      fluidRow(column(width = 1),column(width = 11,h3(checkboxInput("checkbox2", label = "Habilitar_visualização_por_semana_epidemiológica", value = F)))),
+                      fluidRow(column(width = 1),column(width = 11,h3(checkboxInput("checkbox2", label = "Visualização por semana", value = F)))),
                       
                       
                       conditionalPanel(condition = "(input.checkbox2 == false)",fluidRow(column(width = 1),column(width = 10,highchartOutput('obts_dose',height=600),  align = 'center')),column(width = 1)),
@@ -176,7 +428,7 @@ navbarPage("SIVEP-Gripe",theme = shinytheme("cerulean"),#theme = shinytheme("sla
                       
                       
                       
-                      fluidRow(column(width = 3),column(width = 9,h3(checkboxInput("checkbox", label = "Habilitar_visualização_por_semana_epidemiológica", value = F)))),
+                      fluidRow(column(width = 3),column(width = 9,h3(checkboxInput("checkbox", label = "Visualização por semana", value = F)))),
                       
                       #fluidRow(column(width = 12,h3(checkboxInput("checkbox", label = "Habilitar visualização por semana epidemiológica", value = F))), align = 'center'),
                       
@@ -212,7 +464,7 @@ navbarPage("SIVEP-Gripe",theme = shinytheme("cerulean"),#theme = shinytheme("sla
 #############           
 #SEGUNDA ABA####
 
-tabPanel("Experiments",
+tabPanel("Experimentos",
          fluidRow(
            h2("Painel SIVEP-Gripe"),
            h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe 2021-2022", style = "color:gray")),
@@ -220,32 +472,32 @@ tabPanel("Experiments",
            
            
            fluidRow(column(width = 4,selectInput("locais", h3("Unidade Federativa"),
-                       choices = list("TODOS" = 'Todas', "Acre" = 'AC',"ALAGOAS"	="AL",
-                                      "AMAZONAS"=	"AM",
-                                      "AMAPÁ"=	"AP",
-                                      "BAHIA"	="BA",
-                                      "CEARÁ"=	"CE",
-                                      "DISTRITO FEDERAL"=	"DF",
-                                      "ESPÍRITO SANTO"=	"ES",
-                                      "GOIÁS"=	"GO",
-                                      "MARANHÃO"	="MA",
-                                      "MINAS GERAIS"=	"MG",
+                       choices = list("TODOS" = 'Todas', "Acre" = 'AC',"ALAGOAS"  ="AL",
+                                      "AMAZONAS"= "AM",
+                                      "AMAPÁ"=  "AP",
+                                      "BAHIA" ="BA",
+                                      "CEARÁ"=  "CE",
+                                      "DISTRITO FEDERAL"= "DF",
+                                      "ESPÍRITO SANTO"= "ES",
+                                      "GOIÁS"=  "GO",
+                                      "MARANHÃO"  ="MA",
+                                      "MINAS GERAIS"= "MG",
                                       "MATO GROSSO DO SUL"="MS",
-                                      "MATO GROSSO"=	"MT",
-                                      "PARÁ"	="PA",
-                                      "PARAÍBA"	="PB",
-                                      "PERNANBUCO"	="PE",
-                                      "PIAUÍ"=	"PI",
-                                      "PARANÁ"	="PR",
-                                      "RIO DE JANEIRO"=	"RJ",
-                                      "RIO GRANDE DO NORTE"=	"RN",
-                                      "RONDÔNIA"=	"RO",
-                                      "RORAIMA"=	"RR",
-                                      "RIO GRANDE DO SUL"=	"RS",
-                                      "SANTA CATARINA"	="SC",
-                                      "SERGIPE"=	"SE",
-                                      "SÃO PAULO"=	"SP",
-                                      "TOCANTINS"	="TO"), selected = 1)),
+                                      "MATO GROSSO"=  "MT",
+                                      "PARÁ"  ="PA",
+                                      "PARAÍBA" ="PB",
+                                      "PERNANBUCO"  ="PE",
+                                      "PIAUÍ"=  "PI",
+                                      "PARANÁ"  ="PR",
+                                      "RIO DE JANEIRO"= "RJ",
+                                      "RIO GRANDE DO NORTE"=  "RN",
+                                      "RONDÔNIA"= "RO",
+                                      "RORAIMA"=  "RR",
+                                      "RIO GRANDE DO SUL"=  "RS",
+                                      "SANTA CATARINA"  ="SC",
+                                      "SERGIPE"=  "SE",
+                                      "SÃO PAULO"=  "SP",
+                                      "TOCANTINS" ="TO"), selected = 1)),
                     
                     #column(width = 6, selectInput("doses", h3("Doses aplicadas :"),
                     #                               choices = list("Zero" = 'ZR', "Uma" = 'UMA',
@@ -259,7 +511,7 @@ tabPanel("Experiments",
            
  
            column(width = 4,
-           selectInput("doses",h3("Número de doses tomadas"),
+           selectInput("doses",h3("Nº de doses tomadas"),
                        
                        c(Vazio = "vazio", Zero_doses = "ZR", Uma_dose = "UMA", Duas_doses = "DAS", Três_doses = "TRS"))),
 
@@ -292,10 +544,10 @@ tabPanel("Experiments",
              column(width = 4,selectInput("regioes", h3("Regiões"),
                                                  choices = list("TODOS" = 'Todas', 
                                                                 "Sul" = 'Sul',
-                                                                "Sudeste"=	"Sudeste",
-                                                                "Centro-Oeste"=	"Centro-Oeste",
-                                                                "Nordeste"	="Nordeste",
-                                                                "Norte"=	"Norte"), selected = 1))),
+                                                                "Sudeste"=  "Sudeste",
+                                                                "Centro-Oeste"= "Centro-Oeste",
+                                                                "Nordeste"  ="Nordeste",
+                                                                "Norte"=  "Norte"), selected = 1))),
            
            
 
@@ -1095,6 +1347,95 @@ conditionalPanel(condition = "(input.tempo == 'ano' && input.doses == 'TRS' && i
 #########
 
          )#fluidrow
-)#teste
+),#teste
 
+#Correlaçao####
+tabPanel("Correlação",
+         fluidRow(
+           h2("Painel SIVEP-Gripe"),
+           h4(div("Análise dos dados de Síndrome Respiratória Aguda Grave do SIVEP-Gripe 2021-2022", style = "color:gray")),
+           
+           h3("Selecione a variavel desejada para calcular o índice de Moran"),
+           
+           column(width = 6,
+                  selectInput("corr",h3(" "),
+                              
+                              choices = list("Mortalidade por 0 doses" = "MORTALIDADE_0", 
+                                             "Mortalidade por 1 dose" = "MORTALIDADE_1", 
+                                             "Mortalidade por 2 doses" = "MORTALIDADE_2", 
+                                             "Mortalidade por 3 doses" = "MORTALIDADE_3", 
+                                             "Hospitalização por 0 doses" = "HOSPITALIZACAO_0",
+                                             "Hospitalização por 1 doses" = "HOSPITALIZACAO_1",
+                                             "Hospitalização por 2 doses" = "HOSPITALIZACAO_2",
+                                             "Hospitalização por 3 doses" = "HOSPITALIZACAO_3"
+                                )),
+                  conditionalPanel(condition = "(input.corr == 'MORTALIDADE_0')",
+                                   column(width = 6,tableOutput('T_MORTALIDADE_0'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'MORTALIDADE_1')",
+                                   column(width = 6,tableOutput('T_MORTALIDADE_1'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'MORTALIDADE_2')",
+                                   column(width = 6,tableOutput('T_MORTALIDADE_2'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'MORTALIDADE_3')",
+                                   column(width = 6,tableOutput('T_MORTALIDADE_3'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'HOSPITALIZACAO_0')",
+                                   column(width = 6,tableOutput('T_HOSPITALIZACAO_0'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'HOSPITALIZACAO_1')",
+                                   column(width = 6,tableOutput('T_HOSPITALIZACAO_1'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'HOSPITALIZACAO_2')",
+                                   column(width = 6,tableOutput('T_HOSPITALIZACAO_2'),  align = 'center')),
+                  conditionalPanel(condition = "(input.corr == 'HOSPITALIZACAO_3')",
+                                   column(width = 6,tableOutput('T_HOSPITALIZACAO_3'),  align = 'center'))
+                  
+                  
+                  
+                  ),
+           
+
+           
+           
+           conditionalPanel(condition = "(input.corr== 'MORTALIDADE_0')",
+                            column(width = 12,plotlyOutput('G_MORTALIDADE_0',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'MORTALIDADE_1')",
+                            column(width = 12,plotlyOutput('G_MORTALIDADE_1',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'MORTALIDADE_2')",
+                            column(width = 12,plotlyOutput('G_MORTALIDADE_2',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'MORTALIDADE_3')",
+                            column(width = 12,plotlyOutput('G_MORTALIDADE_3',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'HOSPITALIZACAO_0')",
+                            column(width = 12,plotlyOutput('G_HOSPITALIZACAO_0',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'HOSPITALIZACAO_1')",
+                            column(width = 12,plotlyOutput('G_HOSPITALIZACAO_1',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'HOSPITALIZACAO_2')",
+                            column(width = 12,plotlyOutput('G_HOSPITALIZACAO_2',height=600),  align = 'center')),
+           conditionalPanel(condition = "(input.corr== 'HOSPITALIZACAO_3')",
+                            column(width = 12,plotlyOutput('G_HOSPITALIZACAO_3',height=600),  align = 'center'))
+           
+           
+           
+           
+           #conditionalPanel(condition = "(input.corr == 'MORTALIDADE_0')",
+           #                 column(width = 12,tableOutput('T_MORTALIDADE_0'),  align = 'center'))
+           #plotlyOutput(
+           
+         )
+         
+         ),#Correlaçao
+
+
+
+tabPanel("Sobre",
+         fluidRow(
+           tags$style(HTML("
+                    img {
+                      border-radius: 50%;
+                    }")),
+           column(width = 12,uiOutput("img"),h2("Alessandro Pereira"),p("Graduado em Estatística da Universidade Federal do Rio Grande do Norte. Possui experiência em ciência de dados, principalmente na utilização da linguagem R. Usuário avançado do framework shiny, utilizado para a construção de dashboards.") ,p("GitHub:",a("https://github.com/AlessandroPTSN/Painel-SIVEP-Gripe",   href="https://github.com/AlessandroPTSN/Painel-SIVEP-Gripe"))),
+           
+         )
+         
+         
+)#Sobre
+
+
+#####
 )
