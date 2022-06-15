@@ -13,17 +13,15 @@ library(xts)
 library(plyr)
 library(plotly)
 
-
-
 options(highcharter.download_map_data = TRUE)
 mapdata <- get_data_from_map(download_map_data("countries/br/br-all"))
 
 
 
-map <- read_delim("/app/map.csv", 
+map <- read_delim("C:/Users/Neo/Desktop/map.csv", 
                   delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-map_doses<- read_delim("/app/map_doses.csv", 
+map_doses<- read_delim("C:/Users/Neo/Desktop/codigos SQL ITPS/DADOS/map_doses.csv", 
                     delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 map_doses = merge(map, map_doses, by.x = "SIGLA", by.y = "NOMES") %>% select(SIGLA,UF, POPULACAO, `DOSE 1`, `DOSE 2`, `DOSE R`)
@@ -41,13 +39,13 @@ map$`%DOSE R` = map_doses$`%DOSE R`
 
 
 
-top_3_1 <- read_delim("/app/top_3_1.csv", 
+top_3_1 <- read_delim("C:/Users/Neo/Desktop/top_3_1.csv", 
                      delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-top_3_2 <- read_delim("/app/top_3_2.csv", 
+top_3_2 <- read_delim("C:/Users/Neo/Desktop/top_3_2.csv", 
                       delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-top_3_R <- read_delim("/app/top_3_R.csv", 
+top_3_R <- read_delim("C:/Users/Neo/Desktop/top_3_R.csv", 
                       delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 
@@ -55,10 +53,10 @@ top_3_R <- read_delim("/app/top_3_R.csv",
 
 
 
-totais <- read_delim("/app/totais.csv", 
+totais <- read_delim("C:/Users/Neo/Desktop/totais.csv", 
                      delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-TS_BR_UFS <- read_delim("/app/TS_BR_UFS.csv", 
+TS_BR_UFS <- read_delim("C:/Users/Neo/Desktop/codigos SQL ITPS/DADOS/TS_BR_UFS.csv", 
                     delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 TS_BR_UFS$DATA = as.Date(TS_BR_UFS$DATA, format = "%d/%m/%Y")
 #TS_BR_UFS = TS_BR_UFS %>% arrange(TS_BR_UFS$DATA)
@@ -68,9 +66,8 @@ TS_BR_UFS = merge(TS_BR_UFS,totais, by.x = "NOME", by.y = "UF") %>% select(NOME 
   `colnames<-`(c("NOME" ,"DATA", "HOSPITALIZAÇÕES", "ÓBITOS" ,"CURADOS" ,"UTI" ,"INTUBAÇÃO" ,"REGIÃO" ,"NOMES"))
 
 
-head(TS_BR_UFS)
 
-cruza_all <- read_delim("/app/cruza_all.csv", 
+cruza_all <- read_delim("C:/Users/Neo/Desktop/codigos SQL ITPS/DADOS/cruza_all.csv", 
                         delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 cruza_all$DATA = as.Date(cruza_all$DATA, format = "%d/%m/%Y")
 
@@ -78,36 +75,36 @@ cruza=cruza_all %>% select(DATA,UF,OBT_ZR, OBT_UMA, OBT_DAS, OBT_TRS)
 
 
 
-estados = read_delim("/app/estados.csv", 
+estados = read_delim("C:/Users/Neo/Desktop/codigos SQL ITPS/DADOS/estados.csv", 
            delim = ",", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 
 cruza_all = merge(cruza_all,estados, by.x = "UF", by.y = "uf") %>% select(UF,DATA, UTI_INT_OBT_ZR ,UTI_INT_OBT_UMA, UTI_INT_OBT_DAS, UTI_INT_OBT_TRS ,UTI_OBT_ZR ,UTI_OBT_UMA ,UTI_OBT_DAS, UTI_OBT_TRS, UTI_INT_ZR ,UTI_INT_UMA, UTI_INT_DAS, UTI_INT_TRS,
 INT_OBT_ZR ,INT_OBT_UMA, INT_OBT_DAS, INT_OBT_TRS ,INT_ZR, INT_UMA, INT_DAS ,INT_TRS, OBT_ZR ,OBT_UMA ,OBT_DAS, OBT_TRS, ZR ,UMA ,DAS, TRS, UTI_ZR, UTI_UMA, UTI_DAS ,UTI_TRS,  regiao)
 
-#cruza_all %>% filter(UF == "Todas")
-#cruza2=cruza_all %>% select(DATA,UF,UTI_ZR, UTI_UMA, UTI_DAS, UTI_TRS) 
+cor_doses;map
 
-#unique(cruza_all$regiao)
+M=read.csv("C:/Users/Neo/Desktop/codigos SQL ITPS/DADOS/M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
 
-M=read.csv("/app/M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
-
-cor_doses = read_delim("/app/corr_h_o.csv", 
+cor_doses = read_delim("C:/Users/Neo/Desktop/codigos SQL ITPS/DADOS/corr_h_o.csv", 
                        delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
+cor_doses = cor_doses %>% arrange((UF))
+
+
 ###MORAN########
-cor_doses$MORTALIDADE_0 = (cor_doses$OBITO_0/map_doses$POPULACAO)* 100000
-cor_doses$MORTALIDADE_1 = (cor_doses$OBITO_1/map_doses$POPULACAO)* 100000
-cor_doses$MORTALIDADE_2 = (cor_doses$OBITO_2/map_doses$POPULACAO)* 100000
-cor_doses$MORTALIDADE_3 = (cor_doses$OBITO_3/map_doses$POPULACAO)* 100000
+cor_doses$MORTALIDADE_0 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(OBITO_0))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
+cor_doses$MORTALIDADE_1 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(OBITO_1))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
+cor_doses$MORTALIDADE_2 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(OBITO_2))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
+cor_doses$MORTALIDADE_3 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(OBITO_3))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
 
-cor_doses$HOSPITALIZACAO_0 = (cor_doses$HOSP_0/map_doses$POPULACAO)* 100000
-cor_doses$HOSPITALIZACAO_1 = (cor_doses$HOSP_1/map_doses$POPULACAO)* 100000
-cor_doses$HOSPITALIZACAO_2 = (cor_doses$HOSP_2/map_doses$POPULACAO)* 100000
-cor_doses$HOSPITALIZACAO_3 = (cor_doses$HOSP_3/map_doses$POPULACAO)* 100000
+cor_doses$HOSPITALIZACAO_0 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(HOSP_0))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
+cor_doses$HOSPITALIZACAO_1 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(HOSP_1))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
+cor_doses$HOSPITALIZACAO_2 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(HOSP_2))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
+cor_doses$HOSPITALIZACAO_3 = as.numeric(unlist((((cor_doses %>% arrange((UF))) %>% select(HOSP_3))/(map_doses %>% arrange((UF)) %>% select(POPULACAO)))* 100000))
 
 
-y=cor_doses%>%select(MORTALIDADE_0)%>%unlist()%>%as.numeric()
+y=as.numeric(cor_doses%>%select(MORTALIDADE_0)%>%unlist()%>%as.numeric())
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -115,7 +112,7 @@ dy <- y - ybar
 yi <- rep(dy, each=n)
 yj <- rep(dy)
 yiyj <- yi * yj
-pm <- matrix(yiyj, ncol=n)
+pm <- matrix(yiyj, ncol=n)#
 pmw <- pm * wm
 spmw <- sum(pmw)
 smw <- sum(wm)
@@ -135,8 +132,7 @@ reg <- lm(ams[,2] ~ ams[,1])
 T_MORTALIDADE_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
 
 
-
-y=cor_doses%>%select(MORTALIDADE_1 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(MORTALIDADE_1)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -165,7 +161,7 @@ T_MORTALIDADE_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]
 
 
 
-y=cor_doses%>%select(MORTALIDADE_2 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(MORTALIDADE_2)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -194,7 +190,7 @@ T_MORTALIDADE_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]
 
 
 
-y=cor_doses%>%select(MORTALIDADE_3 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(MORTALIDADE_3)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -224,7 +220,7 @@ T_MORTALIDADE_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]
 
 
 
-y=cor_doses%>%select(HOSPITALIZACAO_0 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(HOSPITALIZACAO_0)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -253,7 +249,7 @@ T_HOSPITALIZACAO_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)
 
 
 
-y=cor_doses%>%select(HOSPITALIZACAO_1 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(HOSPITALIZACAO_1)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -282,7 +278,7 @@ T_HOSPITALIZACAO_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)
 
 
 
-y=cor_doses%>%select(HOSPITALIZACAO_2 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(HOSPITALIZACAO_2)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -311,7 +307,7 @@ T_HOSPITALIZACAO_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)
 
 
 
-y=cor_doses%>%select(HOSPITALIZACAO_3 )%>%unlist()%>%as.numeric()
+y=cor_doses%>%select(HOSPITALIZACAO_3)%>%unlist()%>%as.numeric()
 wm = M
 n <- length(y)
 ybar <- mean(y)
@@ -338,13 +334,246 @@ G_HOSPITALIZACAO_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "sca
 reg <- lm(ams[,2] ~ ams[,1])
 T_HOSPITALIZACAO_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
 
+
+
+
+
+y=as.numeric(cor_doses%>%select(OBITO_0)%>%unlist()%>%as.numeric())
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)#
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_OBITO_0 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("OBITO_0")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_OBITO_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+y=cor_doses%>%select(OBITO_1)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_OBITO_1 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("OBITO_1")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_OBITO_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(OBITO_2)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_OBITO_2 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("OBITO_2")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_OBITO_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(OBITO_3)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_OBITO_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("OBITO_3")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_OBITO_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+
+y=cor_doses%>%select(HOSP_0)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSP_0 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSP_0")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSP_0 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSP_1)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSP_1 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSP_1")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSP_1 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSP_2)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSP_2 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSP_2")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSP_2 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
+
+
+
+y=cor_doses%>%select(HOSP_3)%>%unlist()%>%as.numeric()
+wm = M
+n <- length(y)
+ybar <- mean(y)
+dy <- y - ybar
+yi <- rep(dy, each=n)
+yj <- rep(dy)
+yiyj <- yi * yj
+pm <- matrix(yiyj, ncol=n)
+pmw <- pm * wm
+spmw <- sum(pmw)
+smw <- sum(wm)
+sw  <- spmw / smw
+vr <- n / sum(dy^2)
+MI <- vr * sw
+ms <- cbind(id=rep(1:n, each=n), y=rep(y, each=n), value=as.vector(wm * y))
+ms <- ms[ms[,3] > 0, ]
+ams <- aggregate(ms[,2:3], list(ms[,1]), FUN=mean)
+ams <- ams[,-1]
+colnames(ams) <- c('y', 'Defasagem espacial')
+G_HOSP_3 = plot_ly(ams, x = ~y, y = ~`Defasagem espacial`, type = "scatter", mode = "markers") %>%
+  layout(showlegend = F)%>%
+  add_trace(data = ams, x = y, y = c(as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[1]   +   as.numeric(unlist(lm(ams[,2] ~ ams[,1])[1]))[2]*y), mode = "lines")%>%
+  layout(title = 'diagrama de dispersão de Moran', plot_bgcolor = "#f0f0f0", xaxis = list(title = paste("HOSP_3")), yaxis = list(title = 'Defasagem espacial'))
+reg <- lm(ams[,2] ~ ams[,1])
+T_HOSP_3 = data.frame(Moran_I = MI,COEF = as.numeric(coefficients(reg)[2]))
 ############
 
 
 shinyServer(function(input, output, session) {
 
   
-  output$img <- renderUI({
+   output$img <- renderUI({
     tags$img(src = "https://github.com/alessandroptsn.png", height = 208)
   })
   
@@ -389,17 +618,17 @@ shinyServer(function(input, output, session) {
   output$selected_var1 <- renderText({ 
     paste("Top 3 Primeira Dose:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
-  output$table1 <- renderTable(top_3_1 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",  "PRIMEIRA DOSE"))
+  output$table1 <- renderTable(top_3_1 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",	"PRIMEIRA DOSE"))
   
   output$selected_var2 <- renderText({ 
     paste("Top 3 Segunda Dose:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
-  output$table2 <- renderTable(top_3_2 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",  "SEGUNDA DOSE"))
+  output$table2 <- renderTable(top_3_2 %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",	"SEGUNDA DOSE"))
   
   output$selected_varR <- renderText({ 
     paste("Top 3 Reforço Dose:", tolower((totais %>% filter(UF == as.character(input$totais)))[[1]]))
   })
-  output$tableR <- renderTable(top_3_R %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",  "REFORÇO DOSE"))
+  output$tableR <- renderTable(top_3_R %>% filter(NOME == as.character(input$totais))%>% select("TOTAL",	"REFORÇO DOSE"))
   
 
   
@@ -2770,6 +2999,129 @@ shinyServer(function(input, output, session) {
   
 ##########  
   
+  ###MAP2#############
+  output$mapp2 <- renderHighchart({
+    hcmap("countries/br/br-all", data = cor_doses %>% select(UF,
+                                                             if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_0"){paste("MORTALIDADE_0")}else{  
+                                                               if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_1"){paste("MORTALIDADE_1")}else{ 
+                                                                 if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_2"){paste("MORTALIDADE_2")}else{ 
+                                                                   if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_3"){paste("MORTALIDADE_3")}else{ 
+                                                                     if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_0"){paste("HOSPITALIZACAO_0")}else{ 
+                                                                       if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_1"){paste("HOSPITALIZACAO_1")}else{ 
+                                                                         if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_2"){paste("HOSPITALIZACAO_2")}else{ 
+                                                                           if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_3"){paste("HOSPITALIZACAO_3")}else{ 
+                                                                             if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_0"){paste("OBITO_0")}else{  
+                                                                               if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_1"){paste("OBITO_1")}else{ 
+                                                                                 if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_2"){paste("OBITO_2")}else{ 
+                                                                                   if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_3"){paste("OBITO_3")}else{ 
+                                                                                     if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_0"){paste("HOSP_0")}else{ 
+                                                                                       if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_1"){paste("HOSP_1")}else{ 
+                                                                                         if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_2"){paste("HOSP_2")}else{ 
+                                                                                           if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_3"){paste("HOSP_3")}}}}}}}}}}}}}}}}
+                                                             
+                                                             
+    ), value = as.character(paste(
+      if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_0"){paste("MORTALIDADE_0")}else{  
+        if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_1"){paste("MORTALIDADE_1")}else{ 
+          if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_2"){paste("MORTALIDADE_2")}else{ 
+            if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_3"){paste("MORTALIDADE_3")}else{ 
+              if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_0"){paste("HOSPITALIZACAO_0")}else{ 
+                if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_1"){paste("HOSPITALIZACAO_1")}else{ 
+                  if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_2"){paste("HOSPITALIZACAO_2")}else{ 
+                    if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_3"){paste("HOSPITALIZACAO_3")}else{ 
+                      if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_0"){paste("OBITO_0")}else{  
+                        if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_1"){paste("OBITO_1")}else{ 
+                          if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_2"){paste("OBITO_2")}else{ 
+                            if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_3"){paste("OBITO_3")}else{ 
+                              if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_0"){paste("HOSP_0")}else{ 
+                                if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_1"){paste("HOSP_1")}else{ 
+                                  if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_2"){paste("HOSP_2")}else{ 
+                                    if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_3"){paste("HOSP_3")}}}}}}}}}}}}}}}}
+    )),
+    joinBy = c("hc-a2", "UF"), name= as.character(paste(
+      if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_0"){paste("MORTALIDADE_0")}else{  
+        if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_1"){paste("MORTALIDADE_1")}else{ 
+          if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_2"){paste("MORTALIDADE_2")}else{ 
+            if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_3"){paste("MORTALIDADE_3")}else{ 
+              if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_0"){paste("HOSPITALIZACAO_0")}else{ 
+                if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_1"){paste("HOSPITALIZACAO_1")}else{ 
+                  if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_2"){paste("HOSPITALIZACAO_2")}else{ 
+                    if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_3"){paste("HOSPITALIZACAO_3")}else{ 
+                      if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_0"){paste("OBITO_0")}else{  
+                        if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_1"){paste("OBITO_1")}else{ 
+                          if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_2"){paste("OBITO_2")}else{ 
+                            if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_3"){paste("OBITO_3")}else{ 
+                              if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_0"){paste("HOSP_0")}else{ 
+                                if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_1"){paste("HOSP_1")}else{ 
+                                  if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_2"){paste("HOSP_2")}else{ 
+                                    if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_3"){paste("HOSP_3")}}}}}}}}}}}}}}}}
+    )),
+    dataLabels = list(enabled = F),
+    tooltip = list(valueDecimals = 2, valuePrefix = ""))  %>%
+      
+      # "PRIMEIRA DOSE %" = "%DOSE 1", "SEGUNDA DOSE %" ="%DOSE 2" ,"REFORÇO DOSE %" ="%DOSE R"
+      hc_title(text = paste(
+        if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_0"){paste("Mortalidade de pessoas que tomaram 0 doses")}else{  
+          if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_1"){paste("Mortalidade de pessoas que tomaram 1 dose")}else{ 
+            if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_2"){paste("Mortalidade de pessoas que tomaram 2 doses")}else{ 
+              if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_3"){paste("Mortalidade de pessoas que tomaram 3 doses")}else{ 
+                if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_0"){paste("Hospitalização de pessoas que tomaram 0 doses")}else{ 
+                  if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_1"){paste("Hospitalização de pessoas que tomaram 1 dose")}else{ 
+                    if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_2"){paste("Hospitalização de pessoas que tomaram 2 doses")}else{ 
+                      if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_3"){paste("Hospitalização de pessoas que tomaram 3 doses")}else{ 
+                        if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_0"){paste("Óbito de pessoas que tomaram 0 doses")}else{  
+                          if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_1"){paste("Óbito de pessoas que tomaram 1 dose")}else{ 
+                            if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_2"){paste("Óbito de pessoas que tomaram 2 doses")}else{ 
+                              if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_3"){paste("Óbito de pessoas que tomaram 3 doses")}else{ 
+                                if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_0"){paste("Internação de pessoas que tomaram 0 doses")}else{ 
+                                  if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_1"){paste("Internação de pessoas que tomaram 1 dose")}else{ 
+                                    if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_2"){paste("Internação de pessoas que tomaram 2 doses")}else{ 
+                                      if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_3"){paste("Internação de pessoas que tomaram 3 doses")
+                                        
+                                      }}}}}}}}}}}}}}}}
+        ,"no Brasil")) %>%
+      hc_colorAxis(dataClasses = 
+                     if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_0"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$MORTALIDADE_0,cor_doses$MORTALIDADE_1,cor_doses$MORTALIDADE_2,cor_doses$MORTALIDADE_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                        colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                          if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_1"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$MORTALIDADE_0,cor_doses$MORTALIDADE_1,cor_doses$MORTALIDADE_2,cor_doses$MORTALIDADE_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                             colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                               if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_2"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$MORTALIDADE_0,cor_doses$MORTALIDADE_1,cor_doses$MORTALIDADE_2,cor_doses$MORTALIDADE_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                  colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                    if(as.character(input$corr1) == "MORTALIDADE" && as.character(input$corr2) == "D_3"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$MORTALIDADE_0,cor_doses$MORTALIDADE_1,cor_doses$MORTALIDADE_2,cor_doses$MORTALIDADE_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_0"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSPITALIZACAO_0,cor_doses$HOSPITALIZACAO_1,cor_doses$HOSPITALIZACAO_2,cor_doses$HOSPITALIZACAO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_1"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSPITALIZACAO_0,cor_doses$HOSPITALIZACAO_1,cor_doses$HOSPITALIZACAO_2,cor_doses$HOSPITALIZACAO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_2"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSPITALIZACAO_0,cor_doses$HOSPITALIZACAO_1,cor_doses$HOSPITALIZACAO_2,cor_doses$HOSPITALIZACAO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       if(as.character(input$corr1) == "HOSPITALIZACAO" && as.character(input$corr2) == "D_3"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSPITALIZACAO_0,cor_doses$HOSPITALIZACAO_1,cor_doses$HOSPITALIZACAO_2,cor_doses$HOSPITALIZACAO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_0"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$OBITO_0,cor_doses$OBITO_1,cor_doses$OBITO_2,cor_doses$OBITO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_1"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$OBITO_0,cor_doses$OBITO_1,cor_doses$OBITO_2,cor_doses$OBITO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_2"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$OBITO_0,cor_doses$OBITO_1,cor_doses$OBITO_2,cor_doses$OBITO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              if(as.character(input$corr1) == "OBITO" && as.character(input$corr2) == "D_3"){dataClasses =  color_classes( c(as.data.frame(c(cor_doses$OBITO_0,cor_doses$OBITO_1,cor_doses$OBITO_2,cor_doses$OBITO_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           colors = c("#c78181","#a63636","#810303","#640202"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_0"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSP_0,cor_doses$HOSP_1,cor_doses$HOSP_2,cor_doses$HOSP_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_1"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSP_0,cor_doses$HOSP_1,cor_doses$HOSP_2,cor_doses$HOSP_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_2"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSP_0,cor_doses$HOSP_1,cor_doses$HOSP_2,cor_doses$HOSP_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))}else{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               if(as.character(input$corr1) == "INTERNADOS" && as.character(input$corr2) == "D_3"){  dataClasses =  color_classes( c(as.data.frame(c(cor_doses$HOSP_0,cor_doses$HOSP_1,cor_doses$HOSP_2,cor_doses$HOSP_3))%>% sapply(., summary)%>% c())[-3],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   colors = c("#BDD7E7","#6BAED6","#3182BD","#08519C"))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }}}}}}}}}}}}}}}}                   
+      ) %>% 
+      hc_legend(layout = "vertical", align = "right", valueDecimals = 2) %>% 
+      hc_add_theme(hc_theme_538()) %>%
+      hc_mapNavigation(enabled = TRUE)
+  })
+  ###############
   #MORAN#####
   output$G_MORTALIDADE_0 <- renderPlotly({G_MORTALIDADE_0}) 
   output$T_MORTALIDADE_0 <- renderTable(T_MORTALIDADE_0)
@@ -2794,8 +3146,28 @@ shinyServer(function(input, output, session) {
   
   output$G_HOSPITALIZACAO_3 <- renderPlotly({G_HOSPITALIZACAO_3}) 
   output$T_HOSPITALIZACAO_3 <- renderTable(T_HOSPITALIZACAO_3)
+  
+  
+  output$G_OBITO_0 <- renderPlotly({G_OBITO_0}) 
+  output$G_OBITO_1 <- renderPlotly({G_OBITO_1}) 
+  output$G_OBITO_2 <- renderPlotly({G_OBITO_2}) 
+  output$G_OBITO_3 <- renderPlotly({G_OBITO_3}) 
+  
+  output$T_OBITO_0 <- renderTable(T_OBITO_0)
+  output$T_OBITO_1 <- renderTable(T_OBITO_1)
+  output$T_OBITO_2 <- renderTable(T_OBITO_2)
+  output$T_OBITO_3 <- renderTable(T_OBITO_3)
+  
+  output$G_HOSP_0 <- renderPlotly({G_HOSP_0}) 
+  output$G_HOSP_1 <- renderPlotly({G_HOSP_1}) 
+  output$G_HOSP_2 <- renderPlotly({G_HOSP_2}) 
+  output$G_HOSP_3 <- renderPlotly({G_HOSP_3}) 
+  
+  output$T_HOSP_0 <- renderTable(T_HOSP_0)
+  output$T_HOSP_1 <- renderTable(T_HOSP_1)
+  output$T_HOSP_2 <- renderTable(T_HOSP_2)
+  output$T_HOSP_3 <- renderTable(T_HOSP_3)
 
- 
 
 })
 
