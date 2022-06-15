@@ -4,5 +4,5 @@ Dados obtidos : https://opendatasus.saude.gov.br/dataset/srag-2021-e-2022 (acess
 
 https://painel-sivep-gripe.herokuapp.com
 
+![image](https://user-images.githubusercontent.com/50224653/173755748-9a23fe5e-4caa-43cb-b474-478daeeed4f2.png)
 
-![image](https://user-images.githubusercontent.com/50224653/172146869-9f5f8303-c2cb-4569-8c3e-42b291ef2949.png)
