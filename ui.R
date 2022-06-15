@@ -58,7 +58,7 @@ top_3_R <- read_delim("/app/top_3_R.csv",
 totais <- read_delim("/app/totais.csv", 
                      delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-TS_BR_UFS <- read_delim("/app/DADOS/TS_BR_UFS.csv", 
+TS_BR_UFS <- read_delim("/app/TS_BR_UFS.csv", 
                     delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 TS_BR_UFS$DATA = as.Date(TS_BR_UFS$DATA, format = "%d/%m/%Y")
 #TS_BR_UFS = TS_BR_UFS %>% arrange(TS_BR_UFS$DATA)
