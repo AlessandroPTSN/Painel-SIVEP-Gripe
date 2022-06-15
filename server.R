@@ -83,7 +83,7 @@ estados = read_delim("/app/estados.csv",
 cruza_all = merge(cruza_all,estados, by.x = "UF", by.y = "uf") %>% select(UF,DATA, UTI_INT_OBT_ZR ,UTI_INT_OBT_UMA, UTI_INT_OBT_DAS, UTI_INT_OBT_TRS ,UTI_OBT_ZR ,UTI_OBT_UMA ,UTI_OBT_DAS, UTI_OBT_TRS, UTI_INT_ZR ,UTI_INT_UMA, UTI_INT_DAS, UTI_INT_TRS,
 INT_OBT_ZR ,INT_OBT_UMA, INT_OBT_DAS, INT_OBT_TRS ,INT_ZR, INT_UMA, INT_DAS ,INT_TRS, OBT_ZR ,OBT_UMA ,OBT_DAS, OBT_TRS, ZR ,UMA ,DAS, TRS, UTI_ZR, UTI_UMA, UTI_DAS ,UTI_TRS,  regiao)
 
-cor_doses;map
+
 
 M=read.csv("/app/M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
 
