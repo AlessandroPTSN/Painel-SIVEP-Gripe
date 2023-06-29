@@ -13,16 +13,25 @@ library(xts)
 library(plyr)
 library(plotly)
 
+library(jsonlite)
+mapdata <- readLines("br-all.js", warn = FALSE, encoding = "UTF-8")
+mapdata[1] <- gsub(".* = ", "", mapdata[1])
+mapdata <- paste(mapdata, collapse = "\n")
+mapdata <- stringr::str_remove(mapdata, ";$")
 
-options(highcharter.download_map_data = TRUE)
-mapdata <- get_data_from_map(download_map_data("countries/br/br-all"))
+obj <- jsonlite::fromJSON(sub("^[^=]*=", "", mapdata))
+#str(obj, max.level = 1)
+
+
+#options(highcharter.download_map_data = TRUE)
+# <- get_data_from_map(download_map_data("countries/br/br-all"))
 
 
 
-map <- read_delim("/app/map.csv", 
+map <- read_delim("map.csv", 
                   delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-map_doses<- read_delim("/app/map_doses.csv", 
+map_doses<- read_delim("map_doses.csv", 
                     delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 map_doses = merge(map, map_doses, by.x = "SIGLA", by.y = "NOMES") %>% select(SIGLA,UF, POPULACAO, `DOSE 1`, `DOSE 2`, `DOSE R`)
@@ -40,13 +49,13 @@ map$`%DOSE R` = map_doses$`%DOSE R`
 
 
 
-top_3_1 <- read_delim("/app/top_3_1.csv", 
+top_3_1 <- read_delim("top_3_1.csv", 
                      delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-top_3_2 <- read_delim("/app/top_3_2.csv", 
+top_3_2 <- read_delim("top_3_2.csv", 
                       delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-top_3_R <- read_delim("/app/top_3_R.csv", 
+top_3_R <- read_delim("top_3_R.csv", 
                       delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 
@@ -54,10 +63,10 @@ top_3_R <- read_delim("/app/top_3_R.csv",
 
 
 
-totais <- read_delim("/app/totais.csv", 
+totais <- read_delim("totais.csv", 
                      delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
-TS_BR_UFS <- read_delim("/app/TS_BR_UFS.csv", 
+TS_BR_UFS <- read_delim("TS_BR_UFS.csv", 
                     delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 TS_BR_UFS$DATA = as.Date(TS_BR_UFS$DATA, format = "%d/%m/%Y")
 #TS_BR_UFS = TS_BR_UFS %>% arrange(TS_BR_UFS$DATA)
@@ -68,7 +77,7 @@ TS_BR_UFS = merge(TS_BR_UFS,totais, by.x = "NOME", by.y = "UF") %>% select(NOME 
 
 
 
-cruza_all <- read_delim("/app/cruza_all.csv", 
+cruza_all <- read_delim("cruza_all.csv", 
                         delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 cruza_all$DATA = as.Date(cruza_all$DATA, format = "%d/%m/%Y")
 
@@ -76,7 +85,7 @@ cruza=cruza_all %>% select(DATA,UF,OBT_ZR, OBT_UMA, OBT_DAS, OBT_TRS)
 
 
 
-estados = read_delim("/app/estados.csv", 
+estados = read_delim("estados.csv", 
            delim = ",", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 
@@ -85,9 +94,9 @@ INT_OBT_ZR ,INT_OBT_UMA, INT_OBT_DAS, INT_OBT_TRS ,INT_ZR, INT_UMA, INT_DAS ,INT
 
 
 
-M=read.csv("/app/M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
+M=read.csv("M.csv",sep = ";", header = T, row.names = 1)%>%as.matrix()
 
-cor_doses = read_delim("/app/corr_h_o.csv", 
+cor_doses = read_delim("corr_h_o.csv", 
                        delim = ";", escape_double = FALSE, trim_ws = TRUE) %>% as.data.frame()
 
 cor_doses = cor_doses %>% arrange((UF))
